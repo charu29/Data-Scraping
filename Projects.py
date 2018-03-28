@@ -1,5 +1,7 @@
 import requests
 from bs4 import BeautifulSoup
+import re
+from bs4 import NavigableString
 
 
 def crawler():
@@ -7,10 +9,25 @@ def crawler():
         source_code = requests.get(url)
         text = source_code.text
         soup = BeautifulSoup(text, "html.parser")
-        for i in soup.findAll('div', {'class': 'head-part'}):
-                ts = i.next_sibling.div.get_text()
-                link = i.div.a.get('href')
-                title = i.div.a.string
-                print(title, link)
+        
+        nos = []
+        for div in soup.find_all(string=re.compile("Total Submissions")):
+                txt = str(div)
+                no = ""
+                for i, c in enumerate(txt):
+                        if i == 41 or i == 42 or i == 43:
+                                no = no + c
+                nos.append(int(no))
+
+        href = []
+        titles = []
+        for div in soup.find_all("div", class_="title"):
+                href.append(div.a.get('href'))
+                titles.append(div.a.get_text())
+
+        for i in range(len(titles)):
+                if nos[i] < 10:
+                     print(nos[i], ":" + titles[i] + ":" + href[i])
+                
 
 crawler()
