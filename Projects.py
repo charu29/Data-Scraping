@@ -7,6 +7,7 @@ def crawler():
         source_code = requests.get(url)
         text = source_code.text
         soup = BeautifulSoup(text, "html.parser")
+		''' Prints names and links: '''
         for i in soup.findAll('div', {'class': 'head-part'}):
                 tss=i.find('div', {'class':'desc-info'})
                 h=i.div.string
